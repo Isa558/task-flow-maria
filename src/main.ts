@@ -9,7 +9,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const frontendOrigins = (
-    process.env.FRONTEND_ORIGIN ?? 'http://localhost:5173,http://127.0.0.1:5173'
+    process.env.FRONTEND_ORIGIN ??
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
   )
     .split(',')
     .map((origin) => origin.trim())
@@ -40,7 +41,7 @@ async function bootstrap() {
   // ══════════════════════════════════════════════════════════════
   // CONFIGURACIÓN SWAGGER
   // ══════════════════════════════════════════════════════════════
-  const swaggerConfig = new DocumentBuilder()
+  const swaggerConfigBuilder = new DocumentBuilder()
     .setTitle('🚀 TaskFlow Pro API')
     .setDescription(
       'API completa para gestión de tareas y proyectos con autenticación segura.\n\n' +
@@ -82,8 +83,6 @@ async function bootstrap() {
       'support@taskflowpro.com',
     )
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-    .addServer('http://localhost:3000', 'Desarrollo')
-    .addServer('https://api.taskflowpro.com', 'Producción')
     .addBearerAuth(
       {
         type: 'http',
@@ -92,6 +91,13 @@ async function bootstrap() {
         description: 'Ingresa el JWT token obtenido en `POST /auth/login`',
       },
       'Bearer',
+    );
+
+  const swaggerServerUrl = process.env.SWAGGER_SERVER_URL ?? 'https://api.taskflowpro.com';
+  const swaggerConfig = swaggerConfigBuilder
+    .addServer(
+      process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : swaggerServerUrl,
+      process.env.NODE_ENV === 'development' ? 'Desarrollo' : 'Producción',
     )
     .build();
 
