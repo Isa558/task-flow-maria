@@ -9,13 +9,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const defaultOrigins =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
-      : 'https://api.taskflowpro.com';
+    process.env.FRONTEND_ORIGIN ??
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://api.taskflowpro.com';
 
-  const frontendOrigins = (
-    process.env.FRONTEND_ORIGIN ?? defaultOrigins
-  )
+  const frontendOrigins = defaultOrigins
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
