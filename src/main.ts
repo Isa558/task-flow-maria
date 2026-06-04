@@ -10,7 +10,7 @@ async function bootstrap() {
 
   const defaultOrigins =
     process.env.FRONTEND_ORIGIN ??
-    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://api.taskflowpro.com';
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://task-flow-maria.onrender.com,https://api.taskflowpro.com';
 
   const frontendOrigins = defaultOrigins
     .split(',')
@@ -94,12 +94,14 @@ async function bootstrap() {
       'Bearer',
     );
 
-  const swaggerServerUrl = process.env.SWAGGER_SERVER_URL ?? 'https://api.taskflowpro.com';
+  const swaggerServerUrl =
+    process.env.SWAGGER_SERVER_URL ?? 'https://task-flow-maria.onrender.com';
   const swaggerConfig = swaggerConfigBuilder
     .addServer(
       process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : swaggerServerUrl,
       process.env.NODE_ENV === 'development' ? 'Desarrollo' : 'Producción',
     )
+    .addServer('https://api.taskflowpro.com', 'Producción alternativa')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
