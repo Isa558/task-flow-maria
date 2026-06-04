@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.gitignore
+.env
+.env.*
+test
+frontend
+Documentacion
+README.md
+README.MD

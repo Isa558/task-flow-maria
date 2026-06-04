@@ -115,10 +115,29 @@ async function bootstrap() {
     ],
   });
 
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  const requestedPort = Number(process.env.PORT ?? 3000);
 
-  console.log(`\n✅ Servidor ejecutándose en: http://localhost:${port}`);
-  console.log(`📚 Swagger disponible en:    http://localhost:${port}/docs\n`);
+  async function tryListen(startPort: number, maxAttempts = 10) {
+    let port = startPort;
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        await app.listen(port);
+        return port;
+      } catch (err: any) {
+        if (err && err.code === 'EADDRINUSE') {
+          console.warn(`Puerto ${port} en uso, intentando ${port + 1}...`);
+          port++;
+          continue;
+        }
+        throw err;
+      }
+    }
+    throw new Error(`No se pudo asignar puerto tras ${maxAttempts} intentos.`);
+  }
+
+  const boundPort = await tryListen(requestedPort);
+
+  console.log(`\n✅ Servidor ejecutándose en: http://localhost:${boundPort}`);
+  console.log(`📚 Swagger disponible en:    http://localhost:${boundPort}/docs\n`);
 }
 bootstrap();
