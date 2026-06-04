@@ -101,7 +101,6 @@ async function bootstrap() {
       process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : swaggerServerUrl,
       process.env.NODE_ENV === 'development' ? 'Desarrollo' : 'Producción',
     )
-    .addServer('https://api.taskflowpro.com', 'Producción alternativa')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
